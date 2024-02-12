@@ -1,0 +1,203 @@
+---
+title: "CS5200 Practicum II, Part III"
+author: Victoria Klimkowski and Maik Katko
+date: Fall 2023
+output: html_notebook
+---
+
+# Setup and Connection
+
+### We first connect to the database and import the relevant libraries.
+```{r Database Connection}
+# 1. Library
+library(RMySQL, quietly=T)
+library(ggplot2, quietly=T)
+
+# 2. Settings freemysqlhosting.net (max 5MB)
+db_name_fh <- "sql9665320"
+db_user_fh <- "sql9665320"
+db_host_fh <- "sql9.freemysqlhosting.net"
+db_pwd_fh <- "ITbDar1jGA"
+db_port_fh <- 3306
+
+# 3. Connect to remote server database
+mydb.fh <-  dbConnect(RMySQL::MySQL(), user = db_user_fh, password = db_pwd_fh,
+                      dbname = db_name_fh, host = db_host_fh, port = db_port_fh)
+
+mydb <- mydb.fh
+```
+
+### Verify that the db has the correct tables
+```{sql Table Check, connection=mydb}
+SHOW TABLES
+```
+
+### Verify that the tables are populated correctly.
+```{sql Data Check, connection=mydb}
+SELECT * FROM rep_facts
+LIMIT 20
+```
+
+# Question 2: Analytical Queries 
+
+## Analytical Query I
+
+### We first query for all the data on sales reps, the year, their total sold, total qty, and total transactions. We then use r to filter for the top 5 sales reps.
+```{r Analytical Query I Data Retrieval, warning = FALSE}
+sql <- "SELECT
+            sales_rep,
+            year,
+            SUM(total_sold) AS total_sold_per_year,
+            SUM(total_qty_sold) AS total_qty_per_year,
+            SUM(total_transactions) AS total_transactions_per_year
+        FROM
+            rep_facts
+        GROUP BY
+            sales_rep,
+            year
+        ORDER BY
+            sales_rep,
+            total_sold_per_year DESC;"
+
+top_reps <- dbGetQuery(mydb, sql)
+
+# Takes the data and splits it by year to filter for only the top 5 sales reps
+filter_top_5 <- function(df) {
+  df_list <- split(df, df$year)
+  top_5_list <- lapply(df_list, function(x) x[order(-x$total_sold_per_year), ][1:5, ])
+  do.call(rbind, top_5_list)
+}
+
+top_reps_filtered <- filter_top_5(top_reps)
+```
+
+### To visualize the top 5 sales reps in a way that's useful, we create a bar chart that organizes the sales reps by year and orders it in decreasing order of total_sold. Here we use ggplot to help with the visualization. We offer 2 versions of this data visualization. 
+```{r Analytical Query 1 Total Sold Bar Graphs}
+# Version 1: Grouping by year, with a bar for each sales rep.
+# This version helps to show trends of relative performance between the reps
+# .. for each year. 
+ggplot(top_reps_filtered, aes(x = reorder(sales_rep, -total_sold_per_year), y = total_sold_per_year, group = factor(year), fill = factor(year)))+
+  geom_col(position = position_dodge())+
+  facet_wrap(~year, strip.position = "bottom")+
+  theme_classic()+
+  theme(strip.placement = "outside")+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+  labs(x = "Sales Reps by Year", y = "Total Sold ($)")+
+  ggtitle("Total Sales for Top 5 Sales Reps")+
+  guides(fill=guide_legend(title="year"))
+
+# Version 2: Grouping by Sales Rep, with a bar for each year. 
+# This version helps to show an individual rep's contribution over the time span. 
+ggplot(top_reps_filtered, aes(x = reorder(sales_rep, -total_sold_per_year), y = total_sold_per_year, fill = factor(year))) +
+  geom_col(position = position_dodge()) +
+  theme_classic() +
+  labs(x = "Sales Reps by Year", y = "Total Sold ($)") +
+  ggtitle("Total Sales for Top 5 Sales Reps") +
+  guides(fill = guide_legend(title = "Year")) +
+  theme(strip.placement = "outside")
+```
+### Based on these graphs, It's clear that Walison da Silva is the top sales rep by a wider margin than the other reps. Aneeta typically outperformed Lynette, but in 2021 was outpaced by her by a slight margin. Also, it looks like 2021 was an unusually good year for sales overall.
+
+```{r Analytical Query 1 Qty Sold Bar Graphs}
+# Version 1: Grouping by year, with a bar for each sales rep.
+# This version helps to show trends of relative performance between the reps
+# .. for each year. 
+ggplot(top_reps_filtered, aes(x = reorder(sales_rep, -total_qty_per_year), y = total_qty_per_year, group = factor(year), fill = factor(year)))+
+  geom_col(position = position_dodge())+
+  facet_wrap(~year, strip.position = "bottom")+
+  theme_classic()+
+  theme(strip.placement = "outside")+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+  labs(x = "Sales Reps by Year", y = "Quantity Sold")+
+  ggtitle("Total Quantity Sold for Top 5 Sales Reps")+
+  guides(fill=guide_legend(title="year"))
+
+# Version 2: Grouping by Sales Rep, with a bar for each year. 
+# This version helps to show an individual rep's contribution over the time span. 
+ggplot(top_reps_filtered, aes(x = reorder(sales_rep, -total_qty_per_year), y = total_qty_per_year, fill = factor(year))) +
+  geom_col(position = position_dodge()) +
+  theme_classic() +
+  labs(x = "Sales Reps by Year", y = "Quantity Sold") +
+  ggtitle("Total Quantity Sold for Top 5 Sales Reps") +
+  guides(fill = guide_legend(title = "Year")) +
+  theme(strip.placement = "outside")
+```
+### The quantity sold matches closely with the total sold, which makes sense assuming the prices for individual products aren't changing drastically across the years.
+
+## Analytical Query 2
+
+### We first query for the regional total by year and save it in a data frame.
+```{r Analytical Query II Data Retrieval, warning = F}
+sql <- "SELECT
+          year,
+          region,
+          SUM(total_sold) AS regional_total
+        FROM sales_facts
+        GROUP BY year, region"
+
+regional_totals <- dbGetQuery(mydb, sql)
+```
+
+
+### We use ggplot to visualize the data in an easy-to-read way. We offer 2 versions of this data visualization. 
+```{r Analytical Query II Regional Total Bar Graphs}
+# Version 1: Group by year then by region. 
+# Helps to visualize how sales changed over the year relative to the other regions.
+ggplot(regional_totals, aes(x = region, y = regional_total, group = factor(year), fill = factor(year)))+
+  geom_col(position = position_dodge())+
+  facet_wrap(~year, strip.position = "bottom")+
+  theme_classic()+
+  theme(strip.placement = "outside")+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+  labs(x = "Region by Year", y = "Total Sold ($)")+
+  ggtitle("Total Sales by Region and Year")+
+  guides(fill=guide_legend(title="year"))
+
+# Version 2: Group by region with a bar for each year. 
+# Helps to visualize how a region performed over the course of the time period. 
+ggplot(regional_totals, aes(x = region, y = regional_total, fill = factor(year))) +
+  geom_col(position = position_dodge(width = 0.8), width = 0.7) +
+  theme_classic() +
+  labs(x = "Region", y = "Total Sold ($)") +
+  ggtitle("Total Sales by Region and Year") +
+  guides(fill = guide_legend(title = "Year")) +
+  theme(strip.placement = "outside")
+```
+### Based on these graphs, its again clear that 2021 was a particularly strong year for sales with each region showing a large amount of growth compared to 2020. It also seems like South America outperformed EMEA in 2021, while trailing in the other years.
+
+## Analytical Query III
+
+### We first query for total by year and quarter and save it to a data frame.
+```{r Analytical Query III Data Retrieval, warning=FALSE}
+sql <- "SELECT
+          year,
+          quarter,
+          SUM(total_sold) AS total
+        FROM sales_facts
+        GROUP BY year, quarter"
+
+totals.df <- dbGetQuery(mydb, sql)
+```
+
+### To visualize the data, we use a line plot in ggplot.
+```{r Analytical Query III Total Sold Line Graph}
+ggplot(totals.df, aes(x = quarter, y = total, group = factor(year), color = factor(year))) +
+  geom_line(lwd = 0.75) +
+  theme_classic() +
+  labs(x = "Quarter", y = "Total Sold ($)") +
+  ggtitle("Total Sales by Quarter and Year") +
+  guides(color = guide_legend(title = "Year"))
+```
+### This graph also confirms 2021 as a particularly strong year. It seems like the 2nd and 3rd quarters are typically better than the 1st and 4th quarters.
+
+### Disconnect from database
+```{r DB Disconnect}
+
+# sql <- "DROP TABLE sales_facts;"
+# dbExecute(mydb, sql)
+# sql <- "DROP TABLE sales_rep;"
+# dbExecute(mydb, sql)
+
+dbDisconnect(mydb)
+```
+

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<txns>
+  <txn txnID="1001" repID="332">
+    <customer>At Pretium LLC</customer>
+    <country>USA</country>
+    <sale>
+      <date>11/16/2022</date>
+      <product>Xipramin</product>
+      <qty>400</qty>
+      <total currency="USD">288</total>
+    </sale>
+  </txn>
+  <txn txnID="1002" repID="887">
+    <customer>Luctus Aliquet Plc</customer>
+    <country>Brazil</country>
+    <sale>
+      <date>4/6/2022</date>
+      <product>Alaraphosol</product>
+      <qty>1900</qty>
+      <total currency="USD">1748</total>
+    </sale>
+  </txn>
+  <txn txnID="1003" repID="100">
+    <customer>Eleifend GMBH</customer>
+    <country>Germany</country>
+    <sale>
+      <date>3/22/2022</date>
+      <product>Xinoprozen</product>
+      <qty>100</qty>
+      <total currency="USD">282</total>
+    </sale>
+  </txn>
+  <txn txnID="1004" repID="887">
+    <customer>Luctus Aliquet Plc</customer>
+    <country>Brazil</country>
+    <sale>
+      <date>11/13/2022</date>
+      <product>Diaprogenix</product>
+      <qty>300</qty>
+      <total currency="USD">12</total>
+    </sale>
+  </txn>
+  <txn txnID="1005" repID="203">
+    <customer>Adipiscing Mauris Inc.</customer>
+    <country>USA</country>
+    <sale>
+      <date>11/10/2022</date>
+      <product>Colophrazen</product>
+      <qty>1300</qty>
+      <total currency="USD">1599</total>
+    </sale>
+  </txn>
+  <txn txnID="1006" repID="887">
+    <customer>Eu Dolor Companie</customer>
+    <country>Brazil</country>
+    <sale>
+      <date>11/9/2021</date>
+      <product>Bhiktarvizem</product>
+      <qty>1800</qty>
+      <total currency="USD">6966</total>
+    </sale>
+  </txn>
+  <txn txnID="1007" repID="203">
+    <customer>Vitae Risus Incorporated</customer>
+    <country>USA</country>
+    <sale>
+      <date>3/12/2021</date>
+      <product>Xinoprozen</product>
+      <qty>800</qty>
+      <total currency="USD">2256</total>
+    </sale>
+  </txn>
+  <txn txnID="1008" repID="119">
+    <customer>Plaxus Medical</customer>
+    <country>USA</country>
+    <sale>
+      <date>2/20/2021</date>
+      <product>Alaraphosol</product>
+      <qty>1600</qty>
+      <total currency="USD">1472</total>
+    </sale>
+  </txn>
+  <txn txnID="1009" repID="203">
+    <customer>Vitae Risus Incorporated</customer>
+    <country>USA</country>
+    <sale>
+      <date>3/13/2020</date>
+      <product>Presterone</product>
+      <qty>1900</qty>
+      <total currency="USD">1900</total>
+    </sale>
+  </txn>
+  <txn txnID="1010" repID="332">
+    <customer>At Pretium LLC</customer>
+    <country>USA</country>
+    <sale>
+      <date>3/3/2021</date>
+      <product>Xinoprozen</product>
+      <qty>600</qty>
+      <total currency="USD">1692</total>
+    </sale>
+  </txn>
+</txns>

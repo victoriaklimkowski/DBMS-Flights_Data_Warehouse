@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<salesteam>
+  <rep rID="r100">
+    <name>
+      <first>Helmut</first>
+      <sur>Schwab</sur>
+    </name>
+    <territory>EMEA</territory>
+    <commission>0.1</commission>
+  </rep>
+  <rep rID="r887">
+    <name>
+      <first>Walison</first>
+      <sur>da Silva</sur>
+    </name>
+    <territory>South America</territory>
+    <commission>0.08</commission>
+  </rep>
+  <rep rID="r332">
+    <name>
+      <first>Lynette</first>
+      <sur>McRowe</sur>
+    </name>
+    <territory>East</territory>
+    <commission>1.1</commission>
+  </rep>
+  <rep rID="r203">
+    <name>
+      <first>Aneeta</first>
+      <sur>Kappoorthy</sur>
+    </name>
+    <territory>West</territory>
+    <commission>1.1</commission>
+  </rep>
+  <rep rID="r221">
+    <name>
+      <first>Veronika</first>
+      <sur>Sixt</sur>
+    </name>
+    <territory>EMEA</territory>
+    <commission>0.9</commission>
+  </rep>
+  <rep rID="r655">
+    <name>
+      <first>Ralph</first>
+      <sur>Klinger</sur>
+    </name>
+    <territory>West</territory>
+    <commission>1.12</commission>
+  </rep>
+  <rep rID="r119">
+    <name>
+      <first>Prasad</first>
+      <sur>Patel</sur>
+    </name>
+    <territory>EMEA</territory>
+    <commission>0.95</commission>
+  </rep>
+  <rep rID="r988">
+    <name>
+      <first>Xi</first>
+      <sur>Zheng</sur>
+    </name>
+    <territory>EMEA</territory>
+    <commission>1.25</commission>
+  </rep>
+</salesteam>
